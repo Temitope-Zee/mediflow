@@ -1,0 +1,9 @@
+.env
+logs/
+data/landing/*
+!data/landing/.gitkeep
+dbt/mediflow/target/
+dbt/mediflow/dbt_packages/
+dbt/mediflow/logs/
+__pycache__/
+.DS_Store
