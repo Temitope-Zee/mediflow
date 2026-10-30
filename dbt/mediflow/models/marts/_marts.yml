@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: dim_patient
+    columns:
+      - name: patient_id
+        data_tests: [unique, not_null]
+      - name: age_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['0-17', '18-39', '40-64', '65-79', '80+', 'Unknown']
+
+  - name: dim_unit
+    columns:
+      - name: unit_code
+        data_tests: [unique, not_null]
+
+  - name: dim_payer
+    columns:
+      - name: payer_type
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+
+  - name: fct_appointments
+    columns:
+      - name: appointment_id
+        data_tests: [unique, not_null]
+      - name: patient_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+              config:
+                severity: warn
+      - name: unit_code
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_unit')
+                field: unit_code
+
+  - name: fct_admissions
+    columns:
+      - name: admission_id
+        data_tests: [unique, not_null]
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+      - name: unit_code
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_unit')
+                field: unit_code
+
+  - name: fct_invoices
+    columns:
+      - name: invoice_id
+        data_tests: [unique, not_null]
+      - name: patient_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+      - name: payer_type
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payer')
+                field: payer_type

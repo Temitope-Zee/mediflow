@@ -1,5 +1,6 @@
 -- Admissions mapped to the canonical patient, with length of stay and
 -- a flag for patients admitted again within 30 days of discharge.
+-- Rows in int_admissions_rejected are left out.
 
 with admissions as (
     select
@@ -8,6 +9,9 @@ with admissions as (
     from {{ ref('stg_admissions') }} a
     left join {{ ref('stg_patients') }} p
         on a.patient_id = p.patient_id
+    where a.admission_id not in (
+        select admission_id from {{ ref('int_admissions_rejected') }}
+    )
 ),
 
 ordered as (

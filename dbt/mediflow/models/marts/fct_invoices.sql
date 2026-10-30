@@ -1,4 +1,5 @@
--- One row per invoice, with payment status and timing.
+-- One row per valid invoice, with payment status and timing.
+-- Rows in int_invoices_rejected are left out.
 
 select
     i.invoice_id,
@@ -16,3 +17,6 @@ select
 from {{ ref('stg_invoices') }} i
 left join {{ ref('stg_patients') }} p
     on i.patient_id = p.patient_id
+where i.invoice_id not in (
+    select invoice_id from {{ ref('int_invoices_rejected') }}
+)

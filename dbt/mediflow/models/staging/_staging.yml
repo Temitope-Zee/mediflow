@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: stg_patients
+    columns:
+      - name: patient_id
+        data_tests: [unique, not_null]
+      - name: canonical_patient_id
+        data_tests: [not_null]
+      - name: mrn
+        data_tests: [not_null]
+      - name: sex
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['F', 'M']
+      - name: date_of_birth
+        description: Blank when missing or when the source gave a future date.
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+  - name: stg_appointments
+    columns:
+      - name: appointment_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Attended', 'DNA', 'Cancelled', 'Rescheduled']
+      - name: patient_id
+        description: Some appointments point at a patient missing from registration.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+              config:
+                severity: warn
+                store_failures: true
+      - name: unit_code
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_reference_units')
+                field: unit_code
+
+  - name: stg_admissions
+    columns:
+      - name: admission_id
+        data_tests: [unique, not_null]
+      - name: admission_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Emergency', 'Elective']
+      - name: discharge_destination
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Home', 'Care home', 'Other hospital']
+
+  - name: stg_invoices
+    columns:
+      - name: invoice_id
+        data_tests: [unique, not_null]
+      - name: payer_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['NHS', 'Insurer', 'Self-pay']
+
+  - name: stg_reference_units
+    columns:
+      - name: unit_code
+        data_tests: [unique, not_null]
