@@ -9,3 +9,4 @@ __pycache__/
 .DS_Store
 config/airflow.cfg
 dbt/mediflow/ .user.yml
+dbt/mediflow/.user.yml
