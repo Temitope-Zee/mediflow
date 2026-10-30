@@ -1,0 +1,12 @@
+mediflow:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: warehouse
+      port: 5432
+      user: mediflow
+      password: mediflow
+      dbname: mediflow
+      schema: staging
+      threads: 4
