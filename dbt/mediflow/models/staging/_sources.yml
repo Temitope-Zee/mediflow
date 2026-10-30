@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Untouched copies of the landing CSVs, every column stored as text.
+    schema: raw
+    tables:
+      - name: patients
+      - name: appointments
+      - name: admissions
+      - name: invoices
+      - name: reference_units
